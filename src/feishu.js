@@ -16,6 +16,10 @@ export function fallbackSummary(item) {
   return truncate(`${item.title}。关注该事件的产品进展、行业影响和后续动态。`, 90);
 }
 
+export function fallbackHeadline(item) {
+  return truncate(item.summary || item.title || "AI HOT 重要更新", 28);
+}
+
 export async function summarizeItem(item) {
   const openaiKey = process.env.OPENAI_API_KEY;
   const agnesKey = process.env.AGNES_API_KEY;
@@ -74,18 +78,72 @@ export async function summarizeItem(item) {
   }
 }
 
+export async function generateHeadline(item) {
+  const openaiKey = process.env.OPENAI_API_KEY;
+  const agnesKey = process.env.AGNES_API_KEY;
+  const apiKey = openaiKey || agnesKey;
+
+  if (!apiKey) return fallbackHeadline(item);
+
+  const baseURL = openaiKey
+    ? "https://api.openai.com/v1"
+    : process.env.AGNES_BASE_URL;
+
+  if (!baseURL) return fallbackHeadline(item);
+
+  try {
+    const response = await axios.post(
+      `${baseURL.replace(/\/$/, "")}/chat/completions`,
+      {
+        model: process.env.AGNES_MODEL || process.env.OPENAI_MODEL || "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "你是 AI 情报标题编辑。生成一个中文短标题，18 个汉字以内，突出事件主体和影响，不要标点，不要表情。"
+          },
+          {
+            role: "user",
+            content: `原标题：${item.title}\n摘要：${item.summary || item.contentSnippet || ""}`
+          }
+        ],
+        temperature: 0.2,
+        max_tokens: 60
+      },
+      {
+        headers: {
+          authorization: `Bearer ${apiKey}`,
+          "content-type": "application/json"
+        },
+        timeout: Number(process.env.AI_SUMMARY_TIMEOUT_MS || 45000)
+      }
+    );
+
+    return truncate(response.data?.choices?.[0]?.message?.content || fallbackHeadline(item), 28);
+  } catch (error) {
+    console.warn("AI headline failed, use fallback:", error.response?.data || error.message);
+    return fallbackHeadline(item);
+  }
+}
+
+function importanceLabel(item) {
+  const text = `${item.title} ${item.summary || ""}`;
+  if (/融资|估值|发布|上线|突破|OpenAI|Anthropic|DeepSeek|Claude|GPT|Gemini|Cursor/i.test(text)) {
+    return "重要";
+  }
+  return "关注";
+}
+
 export function buildPostMessage(item) {
   return {
     msg_type: "post",
     content: {
       post: {
         zh_cn: {
-          title: "🔥 AI HOT 更新",
+          title: `🔥 ${cleanText(item.headline || fallbackHeadline(item))}`,
           content: [
             [
-              { tag: "text", text: `来源：${cleanText(item.source)}\n` },
-              { tag: "text", text: `标题：${cleanText(item.title)}\n` },
-              { tag: "text", text: `摘要：${cleanText(item.summary || fallbackSummary(item))}\n` },
+              { tag: "text", text: `级别：${importanceLabel(item)}\n` },
+              { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
               { tag: "a", text: "阅读全文", href: item.link }
             ]
           ]
