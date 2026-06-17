@@ -132,6 +132,14 @@ export function groupByTheme(items) {
 
   return [...groups.entries()].map(([theme, groupItems]) => ({
     theme,
-    items: groupItems.sort((a, b) => scoreItem(b) - scoreItem(a))
+    items: groupItems
+      .sort((a, b) => scoreItem(b) - scoreItem(a))
+      .filter((item) => cleanHeadline(item.headline || item.title).length >= 6)
   }));
+}
+
+function cleanHeadline(value) {
+  return String(value || "")
+    .replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, "")
+    .trim();
 }
