@@ -144,11 +144,35 @@ export function buildPostMessage(item) {
           title: `🔥 ${cleanText(item.headline || fallbackHeadline(item))}`,
           content: [
             [
-              { tag: "text", text: `级别：${importanceLabel(item)}\n` },
+              { tag: "text", text: `[${importanceLabel(item)}]\n` },
               { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
               { tag: "a", text: "阅读全文", href: item.link }
             ]
           ]
+        }
+      }
+    }
+  };
+}
+
+export function buildThemeDigestMessage(theme, items) {
+  const content = [];
+
+  for (const item of items) {
+    content.push([
+      { tag: "text", text: `${cleanText(item.headline || fallbackHeadline(item))}\n` },
+      { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
+      { tag: "a", text: "阅读全文", href: item.link }
+    ]);
+  }
+
+  return {
+    msg_type: "post",
+    content: {
+      post: {
+        zh_cn: {
+          title: `🔥 ${theme} 情报`,
+          content
         }
       }
     }
@@ -161,6 +185,19 @@ export async function sendToFeishu(item, webhook = process.env.FEISHU_WEBHOOK) {
   }
 
   await axios.post(webhook, buildPostMessage(item), {
+    headers: {
+      "content-type": "application/json"
+    },
+    timeout: 15000
+  });
+}
+
+export async function sendThemeDigestToFeishu(theme, items, webhook = process.env.FEISHU_WEBHOOK) {
+  if (!webhook) {
+    throw new Error("Missing FEISHU_WEBHOOK");
+  }
+
+  await axios.post(webhook, buildThemeDigestMessage(theme, items), {
     headers: {
       "content-type": "application/json"
     },
