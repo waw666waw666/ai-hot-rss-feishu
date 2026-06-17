@@ -2,12 +2,12 @@ import { readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { fetchAllFeeds } from "./rss.js";
-import { applyKeywordFilter, uniqueById } from "./filter.js";
+import { applyKeywordFilter, sortByRadarScore, uniqueById } from "./filter.js";
 import { sendToFeishu, summarizeItem } from "./feishu.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const seenPath = resolve(__dirname, "../data/seen.json");
-const maxItemsPerRun = Number(process.env.MAX_ITEMS_PER_RUN || 10);
+const maxItemsPerRun = Number(process.env.MAX_ITEMS_PER_RUN || 5);
 
 async function loadSeen() {
   try {
@@ -24,19 +24,11 @@ async function saveSeen(seen) {
   await writeFile(seenPath, `${JSON.stringify(values, null, 2)}\n`, "utf8");
 }
 
-function sortByDateDesc(items) {
-  return [...items].sort((a, b) => {
-    const left = Date.parse(a.pubDate || "") || 0;
-    const right = Date.parse(b.pubDate || "") || 0;
-    return right - left;
-  });
-}
-
 export async function main() {
   const seen = await loadSeen();
   const allItems = uniqueById(await fetchAllFeeds());
   const filteredItems = applyKeywordFilter(allItems);
-  const newItems = sortByDateDesc(filteredItems)
+  const newItems = sortByRadarScore(filteredItems)
     .filter((item) => !seen.has(item.id))
     .slice(0, maxItemsPerRun);
 
