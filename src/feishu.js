@@ -167,6 +167,7 @@ export function buildPostMessage(item) {
 
 export function buildThemeDigestMessage(theme, items) {
   const content = [];
+  const digestTitle = cleanText(items[0]?.headline || items[0]?.summary || theme);
 
   for (const item of items) {
     content.push([
@@ -182,7 +183,7 @@ export function buildThemeDigestMessage(theme, items) {
     content: {
       post: {
         zh_cn: {
-          title: cleanText(theme),
+          title: truncate(digestTitle, 28),
           content
         }
       }
