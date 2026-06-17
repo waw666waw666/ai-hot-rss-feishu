@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { fetchAllFeeds } from "./rss.js";
 import { applyKeywordFilter, sortByRadarScore, uniqueById } from "./filter.js";
-import { generateHeadline, sendToFeishu, summarizeItem } from "./feishu.js";
+import { generateHeadline, generateRecentContext, sendToFeishu, summarizeItem } from "./feishu.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const seenPath = resolve(__dirname, "../data/seen.json");
@@ -37,13 +37,14 @@ export async function main() {
     return;
   }
 
+  const recentContext = await generateRecentContext(newItems);
   const enriched = [];
   for (const item of newItems) {
-    const summary = await summarizeItem(item);
+    const summary = await summarizeItem(item, recentContext);
     enriched.push({
       ...item,
       summary,
-      headline: await generateHeadline({ ...item, summary })
+      headline: await generateHeadline({ ...item, summary }, recentContext)
     });
   }
 
