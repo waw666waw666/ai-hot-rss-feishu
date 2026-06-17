@@ -2,6 +2,11 @@ name: AI HOT RSS to Feishu
 
 on:
   workflow_dispatch:
+    inputs:
+      reason:
+        description: "Trigger reason"
+        required: false
+        default: "manual"
 
 permissions:
   contents: write
@@ -25,6 +30,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Show revision
+        run: |
+          git rev-parse HEAD
+          git log --oneline -1
 
       - name: Run RSS push
         env:

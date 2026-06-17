@@ -196,12 +196,14 @@ export async function sendToFeishu(item, webhook = process.env.FEISHU_WEBHOOK) {
     throw new Error("Missing FEISHU_WEBHOOK");
   }
 
-  await axios.post(webhook, buildPostMessage(item), {
+  const response = await axios.post(webhook, buildPostMessage(item), {
     headers: {
       "content-type": "application/json"
     },
     timeout: 15000
   });
+
+  validateFeishuResponse(response);
 }
 
 export async function sendThemeDigestToFeishu(theme, items, webhook = process.env.FEISHU_WEBHOOK) {
@@ -209,10 +211,22 @@ export async function sendThemeDigestToFeishu(theme, items, webhook = process.en
     throw new Error("Missing FEISHU_WEBHOOK");
   }
 
-  await axios.post(webhook, buildThemeDigestMessage(theme, items), {
+  const response = await axios.post(webhook, buildThemeDigestMessage(theme, items), {
     headers: {
       "content-type": "application/json"
     },
     timeout: 15000
   });
+
+  validateFeishuResponse(response);
+}
+
+function validateFeishuResponse(response) {
+  console.log("Feishu status:", response.status);
+  console.log("Feishu body:", JSON.stringify(response.data));
+
+  const code = response.data?.code ?? response.data?.StatusCode;
+  if (code !== undefined && code !== 0) {
+    throw new Error(`Feishu push failed: ${JSON.stringify(response.data)}`);
+  }
 }
