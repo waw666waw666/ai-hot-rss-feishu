@@ -2,8 +2,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { fetchAllFeeds } from "./rss.js";
-import { applyKeywordFilter, groupByTheme, sortByRadarScore, uniqueById } from "./filter.js";
-import { generateHeadline, sendThemeDigestToFeishu, summarizeItem } from "./feishu.js";
+import { applyKeywordFilter, sortByRadarScore, uniqueById } from "./filter.js";
+import { generateHeadline, sendToFeishu, summarizeItem } from "./feishu.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const seenPath = resolve(__dirname, "../data/seen.json");
@@ -47,16 +47,12 @@ export async function main() {
     });
   }
 
-  const groups = groupByTheme(enriched);
   let pushedCount = 0;
 
-  for (const group of groups) {
-    const topItems = group.items.slice(0, 3);
-    await sendThemeDigestToFeishu(group.theme, topItems);
-    for (const item of topItems) {
-      seen.add(item.id);
-      pushedCount += 1;
-    }
+  for (const item of enriched) {
+    await sendToFeishu(item);
+    seen.add(item.id);
+    pushedCount += 1;
   }
 
   await saveSeen(seen);
