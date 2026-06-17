@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { fetchAllFeeds } from "./rss.js";
 import { applyKeywordFilter, sortByRadarScore, uniqueById } from "./filter.js";
-import { sendToFeishu, summarizeItem } from "./feishu.js";
+import { generateHeadline, sendToFeishu, summarizeItem } from "./feishu.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const seenPath = resolve(__dirname, "../data/seen.json");
@@ -39,9 +39,11 @@ export async function main() {
 
   let pushedCount = 0;
   for (const item of newItems) {
+    const summary = await summarizeItem(item);
     const itemToPush = {
       ...item,
-      summary: await summarizeItem(item)
+      summary,
+      headline: await generateHeadline({ ...item, summary })
     };
 
     await sendToFeishu(itemToPush);
