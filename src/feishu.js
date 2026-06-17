@@ -151,7 +151,6 @@ export function buildPostMessage(item) {
           title: cleanText(item.headline || fallbackHeadline(item)),
           content: [
             [
-              { tag: "text", text: `标题：${cleanText(item.title)}\n` },
               { tag: "text", text: `标题：${cleanText(item.headline || fallbackHeadline(item))}\n` },
               { tag: "text", text: `来源：${sourceLabel(item)}\n` },
               { tag: "text", text: `级别：${importanceLabel(item)}\n` },
