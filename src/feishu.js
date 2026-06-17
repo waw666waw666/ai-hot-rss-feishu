@@ -152,9 +152,9 @@ export function buildPostMessage(item) {
           content: [
             [
               { tag: "text", text: `标题：${cleanText(item.headline || fallbackHeadline(item))}\n` },
-              { tag: "text", text: `来源：${sourceLabel(item)}\n` },
               { tag: "text", text: `级别：${importanceLabel(item)}\n` },
               { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
+              { tag: "text", text: `来源：${sourceLabel(item)}\n` },
               { tag: "a", text: "阅读全文", href: item.link }
             ]
           ]
@@ -171,8 +171,8 @@ export function buildThemeDigestMessage(theme, items) {
   for (const item of items) {
     content.push([
       { tag: "text", text: `标题：${cleanText(item.headline || fallbackHeadline(item))}\n` },
-      { tag: "text", text: `来源：${sourceLabel(item)}\n` },
       { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
+      { tag: "text", text: `来源：${sourceLabel(item)}\n` },
       { tag: "a", text: "阅读全文", href: item.link }
     ]);
   }
