@@ -124,14 +124,6 @@ export async function generateHeadline(item) {
   }
 }
 
-function importanceLabel(item) {
-  const text = `${item.title} ${item.summary || ""}`;
-  if (/融资|估值|发布|上线|突破|OpenAI|Anthropic|DeepSeek|Claude|GPT|Gemini|Cursor/i.test(text)) {
-    return "重要";
-  }
-  return "关注";
-}
-
 function sourceLabel(item) {
   const source = cleanText(item.source);
   if (/openai/i.test(source)) return "OpenAI";
@@ -151,10 +143,9 @@ export function buildPostMessage(item) {
           title: cleanText(item.headline || fallbackHeadline(item)),
           content: [
             [
-              { tag: "text", text: `标题：${cleanText(item.headline || fallbackHeadline(item))}\n` },
-              { tag: "text", text: `级别：${importanceLabel(item)}\n` },
-              { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
-              { tag: "text", text: `来源：${sourceLabel(item)}\n` },
+              { tag: "text", text: `标题：${cleanText(item.headline || fallbackHeadline(item))}\n\n` },
+              { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n\n` },
+              { tag: "text", text: `来源：${sourceLabel(item)}\n\n` },
               { tag: "a", text: "阅读全文", href: item.link }
             ]
           ]
@@ -170,9 +161,9 @@ export function buildThemeDigestMessage(theme, items) {
 
   for (const item of items) {
     content.push([
-      { tag: "text", text: `标题：${cleanText(item.headline || fallbackHeadline(item))}\n` },
-      { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
-      { tag: "text", text: `来源：${sourceLabel(item)}\n` },
+      { tag: "text", text: `标题：${cleanText(item.headline || fallbackHeadline(item))}\n\n` },
+      { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n\n` },
+      { tag: "text", text: `来源：${sourceLabel(item)}\n\n` },
       { tag: "a", text: "阅读全文", href: item.link }
     ]);
   }
