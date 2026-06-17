@@ -32,20 +32,6 @@ function sortByDateDesc(items) {
   });
 }
 
-async function addSummaries(items) {
-  const enabled = process.env.OPENAI_API_KEY || process.env.AGNES_API_KEY;
-  if (!enabled) return items;
-
-  const enriched = [];
-  for (const item of items) {
-    enriched.push({
-      ...item,
-      summary: await summarizeItem(item)
-    });
-  }
-  return enriched;
-}
-
 export async function main() {
   const seen = await loadSeen();
   const allItems = uniqueById(await fetchAllFeeds());
@@ -59,15 +45,21 @@ export async function main() {
     return;
   }
 
-  const itemsToPush = await addSummaries(newItems);
-  await sendToFeishu(itemsToPush);
-
+  let pushedCount = 0;
   for (const item of newItems) {
+    const itemToPush = {
+      ...item,
+      summary: await summarizeItem(item)
+    };
+
+    await sendToFeishu(itemToPush);
     seen.add(item.id);
+    pushedCount += 1;
   }
+
   await saveSeen(seen);
 
-  console.log(`Pushed ${newItems.length} RSS item(s).`);
+  console.log(`Pushed ${pushedCount} RSS item(s).`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
