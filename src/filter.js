@@ -107,3 +107,31 @@ export function sortByRadarScore(items) {
     return right - left;
   });
 }
+
+export function detectTheme(item) {
+  const text = `${item.title} ${item.summary || item.contentSnippet || ""}`.toLowerCase();
+
+  if (/融资|估值|funding|invest|capital/i.test(text)) return "融资";
+  if (/发布|launch|released|update|version|changelog/i.test(text)) return "发布";
+  if (/api|sdk|model|agent|llm|openai|claude|gemini|deepseek|qwen|cursor/i.test(text)) {
+    return "模型/Agent";
+  }
+  if (/status|incident|outage|down|error|限流|故障|宕机/i.test(text)) return "事故";
+  if (/价格|billing|quota|rate limit|subscription|订阅/i.test(text)) return "价格/额度";
+  return "综合";
+}
+
+export function groupByTheme(items) {
+  const groups = new Map();
+
+  for (const item of items) {
+    const theme = detectTheme(item);
+    if (!groups.has(theme)) groups.set(theme, []);
+    groups.get(theme).push(item);
+  }
+
+  return [...groups.entries()].map(([theme, groupItems]) => ({
+    theme,
+    items: groupItems.sort((a, b) => scoreItem(b) - scoreItem(a))
+  }));
+}
