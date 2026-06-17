@@ -45,9 +45,10 @@ export async function summarizeItem(item) {
           {
             role: "system",
             content: [
-              "你是资深 AI 情报编辑。",
+              "你是资深 AI 情报编辑和翻译。",
               "任务：把 RSS 条目改写成一句中文情报摘要。",
-              "要求：不超过 60 个汉字；直接说事实和影响；不要复述标题；不要输出项目符号；不要寒暄。"
+              "如果原文是英文，先翻译再总结。",
+              "要求：不超过 60 个汉字；直接说事实和影响；不要复述标题；不要输出项目符号；不要寒暄；不要提来源。"
             ].join("")
           },
           {
@@ -55,7 +56,8 @@ export async function summarizeItem(item) {
             content: [
               `来源：${item.source}`,
               `标题：${item.title}`,
-              `原文摘要：${item.contentSnippet || ""}`
+              `原文摘要：${item.contentSnippet || ""}`,
+              "请输出一条可直接发给飞书群的中文摘要。"
             ].join("\n")
           }
         ],
@@ -99,7 +101,7 @@ export async function generateHeadline(item) {
         messages: [
           {
             role: "system",
-            content: "你是 AI 情报标题编辑。生成一个中文短标题，18 个汉字以内，突出事件主体和影响，不要标点，不要表情。"
+            content: "你是 AI 情报标题编辑。生成一个中文短标题，18 个汉字以内，突出事件主体和影响，不要标点，不要表情，不要提来源。"
           },
           {
             role: "user",

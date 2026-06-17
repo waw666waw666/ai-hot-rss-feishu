@@ -7,8 +7,12 @@ RSS feeds -> GitHub Actions -> 去重/过滤/可选 AI 摘要 -> 飞书群机器
 ## Feeds
 
 - `https://aihot.virxact.com/feed.xml`
+- `https://openai.com/news/rss.xml`
+- `https://status.claude.com/history.rss`
+- `https://blog.google/rss/`
+- `https://github.blog/changelog/feed/`
 
-默认只订阅 `AI HOT - 精选`，避免 all/daily 源噪声过多。
+默认做官方源聚合，再由评分机制筛掉噪声。
 
 ## Setup
 

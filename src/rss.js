@@ -1,7 +1,11 @@
 import Parser from "rss-parser";
 
 export const FEED_URLS = [
-  "https://aihot.virxact.com/feed.xml"
+  "https://aihot.virxact.com/feed.xml",
+  "https://openai.com/news/rss.xml",
+  "https://status.claude.com/history.rss",
+  "https://blog.google/rss/",
+  "https://github.blog/changelog/feed/"
 ];
 
 const parser = new Parser({
