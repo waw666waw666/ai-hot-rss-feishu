@@ -20,7 +20,65 @@ export function fallbackHeadline(item) {
   return truncate(item.summary || item.title || "AI HOT 重要更新", 28);
 }
 
-export async function summarizeItem(item) {
+function buildRecentContextText(items = []) {
+  return items
+    .slice(0, 8)
+    .map((item) => `${cleanText(item.title)} | ${cleanText(item.source)}`)
+    .filter(Boolean)
+    .join("\n");
+}
+
+export async function generateRecentContext(items) {
+  const baseText = buildRecentContextText(items);
+  if (!baseText) return "";
+
+  const openaiKey = process.env.OPENAI_API_KEY;
+  const agnesKey = process.env.AGNES_API_KEY;
+  const apiKey = openaiKey || agnesKey;
+
+  if (!apiKey) return baseText;
+
+  const baseURL = openaiKey
+    ? "https://api.openai.com/v1"
+    : process.env.AGNES_BASE_URL;
+
+  if (!baseURL) return baseText;
+
+  try {
+    const response = await axios.post(
+      `${baseURL.replace(/\/$/, "")}/chat/completions`,
+      {
+        model: process.env.AGNES_MODEL || process.env.OPENAI_MODEL || "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "你是AI行业编辑。根据最近几条热点，写一段80字内的中文背景摘要，概括最近AI整体走势、重点方向和情绪，不要逐条复述。"
+          },
+          {
+            role: "user",
+            content: `最近热点：\n${baseText}\n\n请输出一段背景摘要。`
+          }
+        ],
+        temperature: 0.2,
+        max_tokens: 120
+      },
+      {
+        headers: {
+          authorization: `Bearer ${apiKey}`,
+          "content-type": "application/json"
+        },
+        timeout: Number(process.env.AI_SUMMARY_TIMEOUT_MS || 45000)
+      }
+    );
+
+    return truncate(response.data?.choices?.[0]?.message?.content || baseText, 160);
+  } catch (error) {
+    console.warn("AI context failed, use fallback:", error.response?.data || error.message);
+    return baseText;
+  }
+}
+
+export async function summarizeItem(item, context = "") {
   const openaiKey = process.env.OPENAI_API_KEY;
   const agnesKey = process.env.AGNES_API_KEY;
   const apiKey = openaiKey || agnesKey;
@@ -51,11 +109,14 @@ export async function summarizeItem(item) {
           {
             role: "user",
             content: [
+              context ? `最近AI背景：${context}` : "",
               `来源：${item.source}`,
               `标题：${item.title}`,
               `原文摘要：${item.contentSnippet || ""}`,
               "请输出一条可直接发给飞书群的中文摘要。"
-            ].join("\n")
+            ]
+              .filter(Boolean)
+              .join("\n")
           }
         ],
         temperature: 0.2,
@@ -77,7 +138,7 @@ export async function summarizeItem(item) {
   }
 }
 
-export async function generateHeadline(item) {
+export async function generateHeadline(item, context = "") {
   const openaiKey = process.env.OPENAI_API_KEY;
   const agnesKey = process.env.AGNES_API_KEY;
   const apiKey = openaiKey || agnesKey;
@@ -102,7 +163,13 @@ export async function generateHeadline(item) {
           },
           {
             role: "user",
-            content: `原标题：${item.title}\n摘要：${item.summary || item.contentSnippet || ""}`
+            content: [
+              context ? `最近AI背景：${context}` : "",
+              `原标题：${item.title}`,
+              `摘要：${item.summary || item.contentSnippet || ""}`
+            ]
+              .filter(Boolean)
+              .join("\n")
           }
         ],
         temperature: 0.2,
