@@ -32,6 +32,6 @@ FEISHU_WEBHOOK="https://open.feishu.cn/open-apis/bot/v2/hook/xxx" npm start
 
 ## GitHub Actions
 
-`.github/workflows/rss.yml` 每 10 分钟运行一次，也支持手动触发。
+`.github/workflows/rss.yml` 支持手动触发，也可以被外部定时器调用 GitHub Actions dispatch API 触发。
 
 去重缓存写入 `data/seen.json`，workflow 会自动提交缓存变化。
