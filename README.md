@@ -7,8 +7,8 @@ RSS feeds -> GitHub Actions -> 去重/过滤/可选 AI 摘要 -> 飞书群机器
 ## Feeds
 
 - `https://aihot.virxact.com/feed.xml`
-- `https://aihot.virxact.com/feed/all.xml`
-- `https://aihot.virxact.com/feed/daily.xml`
+
+默认只订阅 `AI HOT - 精选`，避免 all/daily 源噪声过多。
 
 ## Setup
 

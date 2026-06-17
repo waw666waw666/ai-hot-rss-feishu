@@ -34,3 +34,76 @@ export function uniqueById(items) {
 
   return unique;
 }
+
+const highValueKeywords = [
+  "openai",
+  "chatgpt",
+  "gpt",
+  "claude",
+  "anthropic",
+  "gemini",
+  "google",
+  "deepseek",
+  "qwen",
+  "kimi",
+  "cursor",
+  "agent",
+  "agents",
+  "ai agent",
+  "llm",
+  "model",
+  "人工智能",
+  "大模型",
+  "模型",
+  "智能体",
+  "多模态",
+  "推理",
+  "开源",
+  "融资",
+  "发布",
+  "上线",
+  "突破"
+];
+
+const lowValueKeywords = [
+  "招聘",
+  "课程",
+  "广告",
+  "优惠",
+  "购买",
+  "邀请码",
+  "提醒"
+];
+
+export function scoreItem(item) {
+  const text = [item.source, item.title, item.contentSnippet].join(" ").toLowerCase();
+  let score = 0;
+
+  for (const keyword of highValueKeywords) {
+    if (text.includes(keyword.toLowerCase())) score += 3;
+  }
+
+  for (const keyword of lowValueKeywords) {
+    if (text.includes(keyword.toLowerCase())) score -= 4;
+  }
+
+  const hoursOld = (Date.now() - (Date.parse(item.pubDate || "") || Date.now())) / 36e5;
+  if (hoursOld <= 3) score += 5;
+  else if (hoursOld <= 12) score += 3;
+  else if (hoursOld <= 24) score += 1;
+
+  if (item.source.includes("精选")) score += 5;
+
+  return score;
+}
+
+export function sortByRadarScore(items) {
+  return [...items].sort((a, b) => {
+    const scoreDiff = scoreItem(b) - scoreItem(a);
+    if (scoreDiff !== 0) return scoreDiff;
+
+    const left = Date.parse(a.pubDate || "") || 0;
+    const right = Date.parse(b.pubDate || "") || 0;
+    return right - left;
+  });
+}

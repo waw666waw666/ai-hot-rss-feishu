@@ -1,9 +1,7 @@
 import Parser from "rss-parser";
 
 export const FEED_URLS = [
-  "https://aihot.virxact.com/feed.xml",
-  "https://aihot.virxact.com/feed/all.xml",
-  "https://aihot.virxact.com/feed/daily.xml"
+  "https://aihot.virxact.com/feed.xml"
 ];
 
 const parser = new Parser({
