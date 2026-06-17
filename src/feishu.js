@@ -43,9 +43,9 @@ export async function summarizeItem(item) {
             role: "system",
             content: [
               "你是资深 AI 情报编辑和翻译。",
-              "任务：把 RSS 条目改写成一句中文情报摘要。",
+              "任务：把 RSS 条目改写成一段中文情报摘要。",
               "如果原文是英文，先翻译再总结。",
-              "要求：不超过 60 个汉字；直接说事实和影响；不要复述标题；不要输出项目符号；不要寒暄；不要提来源。"
+              "要求：80 到 120 个汉字；直接说事实、背景和影响；不要复述标题；不要输出项目符号；不要寒暄；不要提来源；尽量保留可读性。"
             ].join("")
           },
           {
@@ -70,7 +70,7 @@ export async function summarizeItem(item) {
       }
     );
 
-    return truncate(response.data?.choices?.[0]?.message?.content || fallbackSummary(item), 90);
+    return truncate(response.data?.choices?.[0]?.message?.content || fallbackSummary(item), 140);
   } catch (error) {
     console.warn("AI summary failed, use fallback:", error.response?.data || error.message);
     return fallbackSummary(item);
@@ -132,6 +132,16 @@ function importanceLabel(item) {
   return "关注";
 }
 
+function sourceLabel(item) {
+  const source = cleanText(item.source);
+  if (/openai/i.test(source)) return "OpenAI";
+  if (/claude|anthropic/i.test(source)) return "Anthropic";
+  if (/google|gemini/i.test(source)) return "Google";
+  if (/github/i.test(source)) return "GitHub";
+  if (/ai hot/i.test(source)) return "AI HOT";
+  return source || "来源未知";
+}
+
 export function buildPostMessage(item) {
   return {
     msg_type: "post",
@@ -141,8 +151,10 @@ export function buildPostMessage(item) {
           title: cleanText(item.headline || fallbackHeadline(item)),
           content: [
             [
-              { tag: "text", text: `级别：${importanceLabel(item)}\n` },
               { tag: "text", text: `标题：${cleanText(item.title)}\n` },
+              { tag: "text", text: `标题：${cleanText(item.headline || fallbackHeadline(item))}\n` },
+              { tag: "text", text: `来源：${sourceLabel(item)}\n` },
+              { tag: "text", text: `级别：${importanceLabel(item)}\n` },
               { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
               { tag: "a", text: "阅读全文", href: item.link }
             ]
@@ -158,8 +170,8 @@ export function buildThemeDigestMessage(theme, items) {
 
   for (const item of items) {
     content.push([
-      { tag: "text", text: `标题：${cleanText(item.title)}\n` },
-      { tag: "text", text: `${cleanText(item.headline || fallbackHeadline(item))}\n` },
+      { tag: "text", text: `标题：${cleanText(item.headline || fallbackHeadline(item))}\n` },
+      { tag: "text", text: `来源：${sourceLabel(item)}\n` },
       { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
       { tag: "a", text: "阅读全文", href: item.link }
     ]);
