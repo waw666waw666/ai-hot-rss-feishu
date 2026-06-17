@@ -31,10 +31,7 @@ export async function summarizeItem(item) {
     ? "https://api.openai.com/v1"
     : process.env.AGNES_BASE_URL;
 
-  if (!baseURL) {
-    console.warn("AGNES_API_KEY is set, but AGNES_BASE_URL is missing. Use fallback summary.");
-    return fallbackSummary(item);
-  }
+  if (!baseURL) return fallbackSummary(item);
 
   try {
     const response = await axios.post(
@@ -141,10 +138,11 @@ export function buildPostMessage(item) {
     content: {
       post: {
         zh_cn: {
-          title: `🔥 ${cleanText(item.headline || fallbackHeadline(item))}`,
+          title: cleanText(item.headline || fallbackHeadline(item)),
           content: [
             [
-              { tag: "text", text: `[${importanceLabel(item)}]\n` },
+              { tag: "text", text: `级别：${importanceLabel(item)}\n` },
+              { tag: "text", text: `标题：${cleanText(item.title)}\n` },
               { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
               { tag: "a", text: "阅读全文", href: item.link }
             ]
@@ -160,6 +158,7 @@ export function buildThemeDigestMessage(theme, items) {
 
   for (const item of items) {
     content.push([
+      { tag: "text", text: `标题：${cleanText(item.title)}\n` },
       { tag: "text", text: `${cleanText(item.headline || fallbackHeadline(item))}\n` },
       { tag: "text", text: `${cleanText(item.summary || fallbackSummary(item))}\n` },
       { tag: "a", text: "阅读全文", href: item.link }
@@ -171,7 +170,7 @@ export function buildThemeDigestMessage(theme, items) {
     content: {
       post: {
         zh_cn: {
-          title: `🔥 ${theme} 情报`,
+          title: cleanText(theme),
           content
         }
       }
