@@ -532,5 +532,10 @@
   "https://openai.com/index/image-gpt",
   "https://openai.com/index/safety-gym",
   "https://openai.com/index/gpt-2-1-5b-release",
-  "https://openai.com/index/fine-tuning-gpt-2"
+  "https://openai.com/index/fine-tuning-gpt-2",
+  "https://openai.com/index/emergent-tool-use",
+  "https://openai.com/index/gpt-2-6-month-follow-up",
+  "https://openai.com/index/musenet",
+  "https://openai.com/index/neural-mmo",
+  "https://openai.com/index/reinforcement-learning-with-prediction-based-rewards"
 ]
