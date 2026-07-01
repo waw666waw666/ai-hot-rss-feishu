@@ -13,7 +13,8 @@ export function applyKeywordFilter(items, keywords = parseKeywords()) {
       item.source,
       item.title,
       item.link,
-      item.contentSnippet
+      item.contentSnippet,
+      ...(item.categories || [])
     ]
       .join(" ")
       .toLowerCase();
@@ -76,7 +77,7 @@ const lowValueKeywords = [
 ];
 
 export function scoreItem(item) {
-  const text = [item.source, item.title, item.contentSnippet].join(" ").toLowerCase();
+  const text = [item.source, item.title, item.contentSnippet, ...(item.categories || [])].join(" ").toLowerCase();
   let score = 0;
 
   for (const keyword of highValueKeywords) {
@@ -109,7 +110,8 @@ export function sortByRadarScore(items) {
 }
 
 export function detectTheme(item) {
-  const text = `${item.title} ${item.summary || item.contentSnippet || ""}`.toLowerCase();
+  const categoriesText = (item.categories || []).join(" ");
+  const text = `${item.title} ${item.summary || item.contentSnippet || ""} ${categoriesText}`.toLowerCase();
 
   if (/融资|估值|funding|invest|capital/i.test(text)) return "融资";
   if (/发布|launch|released|update|version|changelog/i.test(text)) return "发布";

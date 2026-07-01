@@ -5,7 +5,8 @@ export const FEED_URLS = [
   "https://openai.com/news/rss.xml",
   "https://status.claude.com/history.rss",
   "https://blog.google/rss/",
-  "https://github.blog/changelog/feed/"
+  "https://github.blog/changelog/feed/",
+  "https://best.xiaohu.ai/rss.xml"
 ];
 
 const parser = new Parser({
@@ -25,7 +26,8 @@ export async function fetchFeed(url) {
     title: item.title || "Untitled",
     link: item.link || "",
     pubDate: item.isoDate || item.pubDate || "",
-    contentSnippet: item.contentSnippet || item.summary || item.content || ""
+    contentSnippet: item.contentSnippet || item.summary || item.content || "",
+    categories: item.categories || []
   }));
 }
 
