@@ -14,7 +14,7 @@ export function applyKeywordFilter(items, keywords = parseKeywords()) {
       item.title,
       item.link,
       item.contentSnippet,
-      ...(item.categories || [])
+      ...categoryTexts(item.categories)
     ]
       .join(" ")
       .toLowerCase();
@@ -77,7 +77,7 @@ const lowValueKeywords = [
 ];
 
 export function scoreItem(item) {
-  const text = [item.source, item.title, item.contentSnippet, ...(item.categories || [])].join(" ").toLowerCase();
+  const text = [item.source, item.title, item.contentSnippet, ...categoryTexts(item.categories)].join(" ").toLowerCase();
   let score = 0;
 
   for (const keyword of highValueKeywords) {
@@ -110,7 +110,7 @@ export function sortByRadarScore(items) {
 }
 
 export function detectTheme(item) {
-  const categoriesText = (item.categories || []).join(" ");
+  const categoriesText = categoryTexts(item.categories).join(" ");
   const text = `${item.title} ${item.summary || item.contentSnippet || ""} ${categoriesText}`.toLowerCase();
 
   if (/融资|估值|funding|invest|capital/i.test(text)) return "融资";
@@ -144,4 +144,14 @@ function cleanHeadline(value) {
   return String(value || "")
     .replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, "")
     .trim();
+}
+
+function categoryTexts(categories = []) {
+  return categories
+    .map((category) => {
+      if (category == null) return "";
+      if (typeof category !== "object") return String(category);
+      return String(category._ || category.term || category.name || category.label || "");
+    })
+    .filter(Boolean);
 }
