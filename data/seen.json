@@ -1097,5 +1097,10 @@
   "https://openai.com/index/quantifying-generalization-in-reinforcement-learning",
   "https://openai.com/index/learning-concepts-with-energy-functions",
   "https://openai.com/index/plan-online-learn-offline",
-  "https://openai.com/index/ffjord"
+  "https://openai.com/index/ffjord",
+  "https://openai.com/index/glow",
+  "https://openai.com/index/learning-montezumas-revenge-from-a-single-demonstration",
+  "https://openai.com/index/learning-policy-representations-in-multiagent-systems",
+  "https://openai.com/index/ingredients-for-robotics-research",
+  "https://openai.com/index/block-sparse-gpu-kernels"
 ]
