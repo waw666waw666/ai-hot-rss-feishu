@@ -1987,5 +1987,10 @@
   "https://openai.com/index/pixelcnn-plus-plus",
   "https://openai.com/index/faulty-reward-functions",
   "https://openai.com/index/universe",
-  "https://openai.com/index/openai-and-microsoft"
+  "https://openai.com/index/openai-and-microsoft",
+  "https://openai.com/index/exploration",
+  "https://openai.com/index/rl2",
+  "https://openai.com/index/variational-lossy-autoencoder",
+  "https://openai.com/index/extensions-and-limitations-of-the-neural-gpu",
+  "https://openai.com/index/semi-supervised-knowledge-transfer-for-deep-learning-from-private-training-data"
 ]
