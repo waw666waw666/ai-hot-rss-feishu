@@ -1972,5 +1972,10 @@
   "https://openai.com/index/robots-that-learn",
   "https://openai.com/index/roboschool",
   "https://openai.com/index/equivalence-between-policy-gradients-and-soft-q-learning",
-  "https://openai.com/index/stochastic-neural-networks-for-hierarchical-reinforcement-learning"
+  "https://openai.com/index/stochastic-neural-networks-for-hierarchical-reinforcement-learning",
+  "https://openai.com/index/unsupervised-sentiment-neuron",
+  "https://openai.com/index/spam-detection-in-the-physical-world",
+  "https://openai.com/index/evolution-strategies",
+  "https://openai.com/index/one-shot-imitation-learning",
+  "https://openai.com/index/distill"
 ]
