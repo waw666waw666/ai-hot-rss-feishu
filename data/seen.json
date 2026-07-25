@@ -1962,5 +1962,10 @@
   "https://best.xiaohu.ai/article/verification-loops-skills/",
   "https://best.xiaohu.ai/article/agents-read-your-code/",
   "https://openai.com/index/robust-adversarial-inputs",
-  "https://openai.com/index/hindsight-experience-replay"
+  "https://openai.com/index/hindsight-experience-replay",
+  "https://best.xiaohu.ai/article/opus5-prompting-guide/",
+  "https://openai.com/index/teacher-student-curriculum-learning",
+  "https://openai.com/index/faster-physics-in-python",
+  "https://openai.com/index/learning-from-human-preferences",
+  "https://openai.com/index/ucb-exploration-via-q-ensembles"
 ]
