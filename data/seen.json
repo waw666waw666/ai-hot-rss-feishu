@@ -1927,5 +1927,10 @@
   "https://openai.com/index/gotta-learn-fast",
   "https://openai.com/index/retro-contest",
   "https://openai.com/index/variance-reduction-for-policy-gradient-with-action-dependent-factorized-baselines",
-  "https://openai.com/index/hackathon-follow-up"
+  "https://openai.com/index/hackathon-follow-up",
+  "https://openai.com/index/improving-gans-using-optimal-transport",
+  "https://openai.com/index/on-first-order-meta-learning-algorithms",
+  "https://openai.com/index/reptile",
+  "https://openai.com/index/openai-scholars",
+  "https://openai.com/index/some-considerations-on-learning-to-explore-via-meta-reinforcement-learning"
 ]
