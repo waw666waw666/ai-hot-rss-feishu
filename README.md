@@ -34,6 +34,12 @@ npm install
 FEISHU_WEBHOOK="https://open.feishu.cn/open-apis/bot/v2/hook/xxx" npm start
 ```
 
+## Test
+
+```bash
+npm test
+```
+
 ## GitHub Actions
 
 `.github/workflows/rss.yml` 支持手动触发，也可以被外部定时器调用 GitHub Actions dispatch API 触发。
